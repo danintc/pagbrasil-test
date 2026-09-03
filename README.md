@@ -62,21 +62,26 @@ npx playwright install
 ```
 
 ### 3. Execução dos Testes
-O projeto utiliza o pacote `playwright-bdd`, portanto é necessário gerar os arquivos de teste transpilados do Cucumber antes da execução. Você pode executar tudo através do script npm configurado ou passo a passo:
+O projeto possui atalhos convenientes configurados no `package.json` para facilitar a execução local:
 
 ```bash
-# Execução direta com script npm (gera o BDD e executa os testes em modo headless):
-npm run test:bdd
+# Executa a geração do BDD e roda os testes em modo headless:
+npm test
+# (ou: npm run test:bdd)
 
-# OU execute passo a passo:
+# Executa em modo interativo com a interface gráfica do Playwright (ideal para debug):
+npm run test:ui
 
+# Abre o relatório HTML com as evidências (Screenshots, Vídeos e Traces):
+npm run test:report
+```
+
+Caso queira executar os comandos individuais manualmente:
+```bash
 # 1. Gera os arquivos de ponte entre Gherkin e Playwright
 npx bddgen
 
-# 2. Executa a suíte de testes (com interface gráfica e modo interativo)
-npx playwright test --ui
-
-# OU Executa em background (headless)
+# 2. Executa a suíte de testes
 npx playwright test
 ```
 
@@ -144,4 +149,4 @@ O requisito do Cenário 4 orientava a validação das mensagens de erro sob a pr
 
 **Decisão e Abordagem:**
 - O cenário original foi implementado exatamente como solicitado, garantindo o atendimento ao requisito estabelecido no teste e provando a viabilidade técnica da automação (fluxo feliz).
-- **Proatividade (3 Amigos):** Foi adicionado à suite um *segundo cenário explícito* (`Validar campos obrigatórios sem marcar comunicações por WhatsApp`) que testa o mesmo envio em branco **sem** a marcação do checkbox. Esse teste extra comprova a independência da regra de negócio e sugere de forma propositiva um potencial refinamento no Critério de Aceite da estória original.
+- **Proatividade (Cultura dos 3 Amigos / Refinamento Ágil):** Foi adicionado à suíte um *segundo cenário explícito* (`Validar campos obrigatórios sem marcar comunicações por WhatsApp`) que testa o mesmo envio em branco **sem** a marcação do checkbox. Esse teste extra comprova a independência da regra de negócio e exercita a prática de **3 Amigos** (colaboração entre QA, Produto e Desenvolvimento), sugerindo proativamente um refinamento no Critério de Aceite da estória original.

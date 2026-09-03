@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:bdd": "bddgen && playwright test"
+    "test": "npm run test:bdd",
+    "test:bdd": "bddgen && playwright test",
+    "test:ui": "bddgen && playwright test --ui",
+    "test:report": "playwright show-report"
   },
   "keywords": [],
   "author": "",
