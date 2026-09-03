@@ -1,7 +1,7 @@
 {
   "name": "pagbrasil-test",
   "version": "1.0.0",
-  "description": "",
+  "description": "Suíte de testes automatizados E2E com Playwright, TypeScript e BDD (Cucumber) - Desafio Técnico PagBrasil",
   "main": "index.js",
   "scripts": {
     "test": "npm run test:bdd",
@@ -10,8 +10,16 @@
     "test:report": "playwright show-report",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "playwright",
+    "bdd",
+    "cucumber",
+    "typescript",
+    "e2e",
+    "qa",
+    "pagbrasil"
+  ],
+  "author": "Daniel Poitevin",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
