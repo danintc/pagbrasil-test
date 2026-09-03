@@ -118,9 +118,9 @@ Na pasta `.github/workflows/playwright.yml`, há uma pipeline (Actions) configur
 
 O teste abrange as 4 jornadas a seguir:
 
-1. **Alteração de Idioma:** Valida se ao interagir com o rodapé e trocar o idioma para "En", a página recarrega corretamente em inglês e o menu reflete essa alteração (ex: exibindo "Our solutions").
-2. **Menu "Nossas Soluções":** Assegura que o submenu exiba os produtos ativos (ex: *Pix Automático, PagBrasil Checkout*) e garanta a ausência de produtos descontinuados (ex: *PEC Flash, Transferência Bancária*).
-3. **Página "Quem Somos":** Valida elementos fundamentais de presença da marca, como o Ícone de Busca no header, a renderização da Linha do Tempo da empresa, o selo GPTW (Great Place to Work) e a presença das filiais da empresa no rodapé.
+1. **Menu "Nossas Soluções":** Assegura que o submenu exiba os produtos ativos (ex: *Pix Automático, PagBrasil Checkout*) e garanta a ausência de produtos descontinuados (ex: *PEC Flash, Transferência Bancária*).
+2. **Página "Quem Somos":** Valida elementos fundamentais de presença da marca, como o Ícone de Busca no header, a renderização da Linha do Tempo da empresa, o selo GPTW (Great Place to Work) e a presença das filiais da empresa no rodapé.
+3. **Alteração de Idioma:** Valida se ao interagir com o rodapé e trocar o idioma para "En", a página recarrega corretamente em inglês e o menu reflete essa alteração (ex: exibindo "Our solutions").
 4. **Fale com um Especialista (Formulários):** Valida a jornada de contato comercial, lidando com seleção de popups, navegação, preenchimento de checkboxes ocultos e garantindo que as validações de campos obrigatórios sejam acionadas corretamente pelo *Contact Form 7*.
 
 ---
