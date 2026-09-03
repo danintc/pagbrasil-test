@@ -131,8 +131,19 @@ Durante a automação, apliquei estratégias avançadas para garantir a **resili
 
 ### 🏛️ Arquitetura Page Object Model (POM) Modular e Navegação com `baseURL`
 Para garantir manutenibilidade a longo prazo, código limpo (*Clean Code*) e facilidade na localização de elementos, a suíte foi arquitetada com o padrão **Page Object Model (POM)** de forma estritamente modular:
-- **Correspondência 1:1:** Cada arquivo de step (`tests/steps/*.steps.ts`) possui sua respectiva classe de página (`tests/pages/*.page.ts`). Os arquivos de step cuidam exclusivamente da semântica BDD, enquanto as classes de página encapsulam seletores CSS, injeções para o Trace Viewer, esperas de rede e validações de DOM.
+- **Correspondência 1:1:** Cada arquivo de step (`tests/steps/*.steps.ts`) possui sua respectiva classe de página (`tests/pages/*.page.ts`). Os arquivos de step cuidam exclusivamente da semântica BDD, enquanto as classes de página encapsulam seletores, injeções para o Trace Viewer, esperas de rede e validações de DOM.
 - **Portabilidade de Ambientes via `baseURL`:** A URL base (`https://www.pagbrasil.com`) foi centralizada no `playwright.config.ts`. O método de navegação inicial utiliza a rota relativa `await this.page.goto('/pt-br/')`, eliminando domínios absolutos chumbados no código e permitindo alternar ambientes facilmente via configuração.
+
+### 🎯 Estratégia de Locators e Filosofia A11y (Accessibility-First)
+Um dos pilares de qualidade deste projeto é a adesão rigorosa às **boas práticas oficiais do Playwright** para definição de seletores:
+- **Por que não utilizamos IDs fixos em tudo?** 
+  1. *Contexto Caixa-Preta em Aplicação Real/CMS:* O site é desenvolvido sobre WordPress/Elementor, onde os QAs não têm controle do código para injetar `data-testid` ou `id` nas tags. Além disso, o Contact Form 7 e o CMS não geram IDs para a maioria dos inputs e botões.
+  2. *Superação do Paradigma Selenium:* No passado, acreditava-se que "todo elemento precisava de um ID". No Playwright e no desenvolvimento moderno, **recorrer cegamente a IDs é um anti-pattern**, pois IDs não garantem que o elemento está visível, acessível ou exibindo o texto correto. Além disso, IDs de CMS (como `#menu-item-48800`) são autoincrementais de banco de dados e quebram facilmente entre ambientes (staging/prod).
+- **Hierarquia Oficial Adotada:**
+  1. **`getByRole(...)` (Padrão Ouro):** Interações com links (`getByRole('link', { name: 'En' })`), botões de submissão (`getByRole('button', { name: 'Continuar' })`) e caixas de seleção (`getByRole('checkbox')`). Testa a funcionalidade e a conformidade com leitores de tela (A11y / W3C) simultaneamente.
+  2. **`getByLabel(...)` / `getByPlaceholder(...)`:** Para campos de entrada de dados.
+  3. **`getByText(...)`:** Para conferência de rótulos, mensagens de erro e itens de texto no DOM.
+  4. **Seletores Semânticos / Scoped Locators:** Utilizados para delimitar contextos (ex: `.main-navigation`, `header`, `footer`), evitando seletores CSS frágeis ou IDs numéricos instáveis.
 
 ### 🛠️ Lidando com Lazy-Loading (NitroPack) e Limitações Visuais
 O site utiliza o plugin de otimização *NitroPack*, que adia massivamente a execução do JavaScript até haver interação humana real (movimento contínuo de mouse ou scroll profundo). 

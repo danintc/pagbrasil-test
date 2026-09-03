@@ -10,7 +10,10 @@ export class NossasSolucoesPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.megaMenu = page.locator('#menu-item-48800');
+    this.megaMenu = page
+      .locator('.main-navigation .menu-item-has-children')
+      .filter({ has: page.getByRole('link', { name: /nossas soluções/i }) })
+      .first();
   }
 
   /**
@@ -28,22 +31,20 @@ export class NossasSolucoesPage {
    * @param menuName Nome do menu pai a ser acessado (ex: "Nossas Soluções")
    */
   async acessarMenu(menuName: string) {
-    await this.page.evaluate(() => {
-      const style = document.createElement('style');
-      style.textContent = `
-        #menu-item-48800 ul {
-          display: block !important;
-          opacity: 1 !important;
-          visibility: visible !important;
-          left: 0 !important;
-          position: relative !important;
-        }
-      `;
-      document.head.appendChild(style);
+    const menuParent = this.page.locator('.main-navigation .menu-item-has-children').filter({ hasText: menuName }).first();
+    await menuParent.hover();
+
+    await menuParent.evaluate(el => {
+      const ul = el.querySelector('ul');
+      if (ul) {
+        ul.style.display = 'block';
+        ul.style.opacity = '1';
+        ul.style.visibility = 'visible';
+        ul.style.left = '0';
+        ul.style.position = 'relative';
+      }
     });
 
-    const menuParent = this.page.locator('.menu-item-has-children').filter({ hasText: menuName }).first();
-    await menuParent.hover();
     await this.page.waitForTimeout(500);
   }
 
@@ -53,7 +54,7 @@ export class NossasSolucoesPage {
    */
   async validarItensMenu(itens: string[]) {
     for (const item of itens) {
-      await expect(this.megaMenu.getByText(item, { exact: true }).first()).toBeVisible();
+      await expect(this.megaMenu.getByRole('link', { name: item, exact: true }).first()).toBeVisible();
     }
   }
 
@@ -63,7 +64,7 @@ export class NossasSolucoesPage {
    */
   async validarItensNaoExibidos(itens: string[]) {
     for (const item of itens) {
-      await expect(this.megaMenu.getByText(item, { exact: true })).toHaveCount(0);
+      await expect(this.megaMenu.getByRole('link', { name: item, exact: true })).toHaveCount(0);
     }
   }
 }

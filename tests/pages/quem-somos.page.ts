@@ -22,27 +22,24 @@ export class QuemSomosPage {
    * @param subMenuName Nome do item interno a ser clicado (ex: "Quem somos")
    */
   async navegarPeloMenu(menuName: string, subMenuName: string) {
-    await this.page.evaluate(() => {
-      const style = document.createElement('style');
-      style.textContent = `
-        #menu-item-48823 ul {
-          display: block !important;
-          opacity: 1 !important;
-          visibility: visible !important;
-          left: 0 !important;
-          position: relative !important;
-        }
-      `;
-      document.head.appendChild(style);
-    });
-
-    const menuParent = this.page.locator('.menu-item-has-children').filter({ hasText: menuName }).first();
+    const menuParent = this.header.locator('.menu-item-has-children').filter({ hasText: menuName }).first();
     await menuParent.hover();
 
-    const subMenu = menuParent.locator('ul').getByRole('link', { name: subMenuName, exact: true });
+    await menuParent.evaluate(el => {
+      const ul = el.querySelector('ul');
+      if (ul) {
+        ul.style.display = 'block';
+        ul.style.opacity = '1';
+        ul.style.visibility = 'visible';
+        ul.style.left = '0';
+        ul.style.position = 'relative';
+      }
+    });
+
+    const subMenu = menuParent.getByRole('link', { name: subMenuName, exact: true });
     await subMenu.waitFor({ state: 'visible', timeout: 5000 });
 
-    await subMenu.dispatchEvent('click');
+    await subMenu.click({ force: true });
     await this.page.waitForLoadState('domcontentloaded');
   }
 
@@ -50,7 +47,7 @@ export class QuemSomosPage {
    * Valida a visibilidade do ícone de busca no cabeçalho.
    */
   async validarIconeBusca() {
-    const searchIcon = this.page.locator('header a[href="#popup-search"]:visible').first();
+    const searchIcon = this.header.locator('a[href="#popup-search"]:visible').first();
     await expect(searchIcon).toBeVisible();
   }
 
@@ -68,10 +65,7 @@ export class QuemSomosPage {
    */
   async validarSeloGptw() {
     await this.footer.scrollIntoViewIfNeeded();
-    const gptwBadge = this.footer
-      .locator('a[href*="nossas-certificacoes"]')
-      .filter({ has: this.page.locator('svg, img') })
-      .first();
+    const gptwBadge = this.footer.locator('.gptw-logo').first();
     await expect(gptwBadge).toBeVisible();
   }
 

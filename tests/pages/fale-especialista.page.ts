@@ -63,7 +63,7 @@ export class FaleEspecialistaPage {
    * 3. Valida se o payload retornado contém 'status: validation_failed'.
    */
   private async submeterFormularioEValidarAjax() {
-    const submitBtn = this.form.locator('input[type="submit"]').first();
+    const submitBtn = this.form.getByRole('button', { name: 'Continuar' }).first();
 
     const responsePromise = this.page.waitForResponse(
       response => response.url().includes('feedback') && response.request().method() === 'POST'
@@ -83,7 +83,7 @@ export class FaleEspecialistaPage {
    */
   async marcarWhatsAppESubmeter(checkboxText: string) {
     await this.form.scrollIntoViewIfNeeded();
-    const cb = this.form.locator('input[type="checkbox"][name="autorizacao-checkbox[]"]').first();
+    const cb = this.form.locator('input[name="autorizacao-checkbox[]"]').first();
     await cb.check({ force: true });
 
     await this.submeterFormularioEValidarAjax();

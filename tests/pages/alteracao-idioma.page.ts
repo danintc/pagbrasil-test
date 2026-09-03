@@ -7,16 +7,16 @@ import { expect, type Locator, type Page } from '@playwright/test';
 export class AlteracaoIdiomaPage {
   readonly page: Page;
   readonly footer: Locator;
-  readonly masthead: Locator;
+  readonly header: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.footer = page.locator('footer');
-    this.masthead = page.locator('#masthead');
+    this.header = page.locator('header');
   }
 
   /**
-   * Rola até o rodapé e clica no botão com o idioma desejado (ex: "En", "Pt").
+   * Rola até o rodapé e clica no link com o idioma desejado (ex: "En", "Pt").
    * @param idioma Texto exato do link do idioma
    */
   async selecionarIdiomaRodape(idioma: string) {
@@ -42,6 +42,6 @@ export class AlteracaoIdiomaPage {
    * @param opcaoMenu Nome esperado do menu (ex: "Our solutions")
    */
   async validarOpcaoMenuHeader(opcaoMenu: string) {
-    await expect(this.masthead.getByText(opcaoMenu, { exact: true }).first()).toBeVisible();
+    await expect(this.header.getByText(opcaoMenu).first()).toBeVisible();
   }
 }
