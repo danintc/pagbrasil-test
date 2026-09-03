@@ -24,7 +24,7 @@ export default defineConfig({
   reporter: 'html',
   
   use: {
-    baseURL: 'https://www.pagbrasil.com/pt-br/',
+    baseURL: 'https://www.pagbrasil.com',
     viewport: { width: 1920, height: 1080 },
     
     /* Configurações para acelerar a inicialização do navegador */

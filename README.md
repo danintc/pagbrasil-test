@@ -10,7 +10,8 @@ O projeto tem o objetivo de validar funcionalidades críticas do site oficial da
 
 - **[Playwright](https://playwright.dev/):** Framework principal para automação de interações no navegador (rápido, resiliente e com suporte a múltiplos motores).
 - **[Cucumber (playwright-bdd)](https://github.com/vitalets/playwright-bdd):** Integração do BDD (Behavior Driven Development) com o ecossistema do Playwright, permitindo a escrita de testes legíveis focados em regras de negócio no formato Gherkin.
-- **[TypeScript](https://www.typescriptlang.org/):** Linguagem utilizada para garantir tipagem estática, escalabilidade e manutenibilidade dos *Step Definitions*.
+- **[Page Object Model (POM)](https://playwright.dev/docs/pom):** Padrão de design estrutural adotado para desacoplar seletores, esperas e ações de tela dos passos do BDD em classes modulares.
+- **[TypeScript](https://www.typescriptlang.org/):** Linguagem utilizada para garantir tipagem estática, escalabilidade e manutenibilidade dos *Step Definitions* e *Page Objects*.
 - **[Node.js](https://nodejs.org/):** Ambiente de execução.
 
 ---
@@ -19,17 +20,25 @@ O projeto tem o objetivo de validar funcionalidades críticas do site oficial da
 
 ```text
 pagbrasil-test/
+├── .github/
+│   └── workflows/
+│       └── playwright.yml     # Pipeline de CI/CD configurada no GitHub Actions
 ├── tests/
 │   ├── features/              # Arquivos .feature escritos em Gherkin (Cenários de Teste)
 │   │   ├── alteracao-idioma.feature
 │   │   ├── fale-especialista.feature
 │   │   ├── nossas-solucoes.feature
 │   │   └── quem-somos.feature
-│   └── steps/                 # Implementação dos passos (Step Definitions) em TypeScript
-│       ├── alteracao-idioma.steps.ts
-│       ├── fale-especialista.steps.ts
-│       ├── nossas-solucoes.steps.ts
-│       └── quem-somos.steps.ts
+│   ├── steps/                 # Implementação dos passos (Step Definitions) em TypeScript
+│   │   ├── alteracao-idioma.steps.ts
+│   │   ├── fale-especialista.steps.ts
+│   │   ├── nossas-solucoes.steps.ts
+│   │   └── quem-somos.steps.ts
+│   └── pages/                 # Page Objects (POM) encapsulando seletores, ações e validações
+│       ├── alteracao-idioma.page.ts
+│       ├── fale-especialista.page.ts
+│       ├── nossas-solucoes.page.ts
+│       └── quem-somos.page.ts
 ├── playwright.config.ts       # Configurações globais do Playwright (workers, navegadores, baseURL, etc.)
 └── package.json               # Dependências do projeto e scripts npm
 ```
@@ -53,20 +62,25 @@ npx playwright install
 ```
 
 ### 3. Execução dos Testes
-O projeto utiliza o pacote `playwright-bdd`, portanto é necessário gerar os arquivos de teste transpilados do Cucumber antes da execução:
+O projeto utiliza o pacote `playwright-bdd`, portanto é necessário gerar os arquivos de teste transpilados do Cucumber antes da execução. Você pode executar tudo através do script npm configurado ou passo a passo:
 
 ```bash
+# Execução direta com script npm (gera o BDD e executa os testes em modo headless):
+npm run test:bdd
+
+# OU execute passo a passo:
+
 # 1. Gera os arquivos de ponte entre Gherkin e Playwright
 npx bddgen
 
-# 2. Executa a suíte de testes (com interface gráfica)
+# 2. Executa a suíte de testes (com interface gráfica e modo interativo)
 npx playwright test --ui
 
 # OU Executa em background (headless)
 npx playwright test
 ```
 
-> **Dica:** Caso modifique um arquivo `.feature` ou `.steps.ts`, lembre-se sempre de rodar o `npx bddgen` novamente antes de rodar o `test`.
+> **Dica:** Caso modifique um arquivo `.feature`, `.steps.ts` ou `.page.ts`, o comando `npm run test:bdd` (ou `npx bddgen`) recompila automaticamente os cenários antes de rodar.
 
 ### 4. Relatórios e Evidências de Falha
 O projeto está configurado nativamente com o **HTML Reporter** do Playwright. 
@@ -83,8 +97,8 @@ npx playwright show-report
 ### 5. Integração Contínua (CI/CD - GitHub Actions)
 Como bônus, este projeto já está configurado para rodar na nuvem em qualquer repositório do **GitHub**.
 Na pasta `.github/workflows/playwright.yml`, há uma pipeline (Actions) configurada para:
-- Executar todos os cenários (Chromium, Firefox, WebKit) a cada *Push* ou *Pull Request* para a branch `main` ou `master`.
-- Compilar o BDD dinamicamente via `npx bddgen` no runner (Ubuntu).
+- Executar todos os cenários (Chromium, Firefox, WebKit) a cada *Push* ou *Pull Request* para as branches `main` ou `master`.
+- Compilar o BDD dinamicamente via `npm run test:bdd` no runner (Ubuntu).
 - Em caso de falha transitória na nuvem, o Playwright aplicará o *Retry* automático (2 tentativas).
 - Gerar o HTML Report contendo Evidências de Falhas (Screenshots, Videos e Traces) e anexá-lo como um **Artifact** diretamente na aba "Actions" para download.
 
@@ -104,6 +118,11 @@ O teste abrange as 4 jornadas a seguir:
 ## 🧠 Destaques Técnicos e Visão de Qualidade (QA)
 
 Durante a automação, apliquei estratégias avançadas para garantir a **resiliência (anti-flakiness)** da suíte frente a algumas características técnicas do ambiente de produção da PagBrasil:
+
+### 🏛️ Arquitetura Page Object Model (POM) Modular e Navegação com `baseURL`
+Para garantir manutenibilidade a longo prazo, código limpo (*Clean Code*) e facilidade na localização de elementos, a suíte foi arquitetada com o padrão **Page Object Model (POM)** de forma estritamente modular:
+- **Correspondência 1:1:** Cada arquivo de step (`tests/steps/*.steps.ts`) possui sua respectiva classe de página (`tests/pages/*.page.ts`). Os arquivos de step cuidam exclusivamente da semântica BDD, enquanto as classes de página encapsulam seletores CSS, injeções para o Trace Viewer, esperas de rede e validações de DOM.
+- **Portabilidade de Ambientes via `baseURL`:** A URL base (`https://www.pagbrasil.com`) foi centralizada no `playwright.config.ts`. O método de navegação inicial utiliza a rota relativa `await this.page.goto('/pt-br/')`, eliminando domínios absolutos chumbados no código e permitindo alternar ambientes facilmente via configuração.
 
 ### 🛠️ Lidando com Lazy-Loading (NitroPack) e Limitações Visuais
 O site utiliza o plugin de otimização *NitroPack*, que adia massivamente a execução do JavaScript até haver interação humana real (movimento contínuo de mouse ou scroll profundo). 
