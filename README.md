@@ -107,6 +107,7 @@ npx playwright show-report
 Como bônus, este projeto já está configurado para rodar na nuvem em qualquer repositório do **GitHub**.
 Na pasta `.github/workflows/playwright.yml`, há uma pipeline (Actions) configurada para:
 - Executar todos os cenários (Chromium, Firefox, WebKit) a cada *Push* ou *Pull Request* para as branches `main` ou `master`.
+- Validar a integridade estática dos tipos via TypeScript (`npm run typecheck`) como quality gate prévio.
 - Compilar o BDD dinamicamente via `npm run test:bdd` no runner (Ubuntu).
 - Em caso de falha transitória na nuvem, o Playwright aplicará o *Retry* automático (2 tentativas).
 - Gerar o HTML Report contendo Evidências de Falhas (Screenshots, Videos e Traces) e anexá-lo como um **Artifact** diretamente na aba "Actions" para download.

@@ -28,7 +28,7 @@ export class FaleEspecialistaPage {
 
   /**
    * Dispara o lazy loading do NitroPack através de movimentos simulados de mouse e scroll,
-   * localiza a opção desejada, clica no botão "Entrar em contato" e aguarda o formulário carregar no DOM.
+   * localiza o card da opção de especialista, clica nele e aguarda o formulário carregar no DOM.
    * @param optionTitle Título da opção/card (ex: "Tenho um e-commerce")
    */
   async selecionarOpcaoEspecialista(optionTitle: string) {
