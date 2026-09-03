@@ -40,6 +40,7 @@ pagbrasil-test/
 │       ├── nossas-solucoes.page.ts
 │       └── quem-somos.page.ts
 ├── playwright.config.ts       # Configurações globais do Playwright (workers, navegadores, baseURL, etc.)
+├── tsconfig.json              # Configurações do compilador TypeScript e verificação de tipos
 └── package.json               # Dependências do projeto e scripts npm
 ```
 
@@ -71,6 +72,9 @@ npm test
 
 # Executa em modo interativo com a interface gráfica do Playwright (ideal para debug):
 npm run test:ui
+
+# Executa a checagem de tipos estáticos com TypeScript:
+npm run typecheck
 
 # Abre o relatório HTML com as evidências (Screenshots, Vídeos e Traces):
 npm run test:report

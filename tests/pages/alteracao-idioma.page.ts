@@ -1,14 +1,19 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object que encapsula as interações e validações do fluxo de
  * alteração de idioma no rodapé do site PagBrasil.
  */
 export class AlteracaoIdiomaPage {
-  constructor(public page: Page) {}
+  readonly page: Page;
+  readonly footer: Locator;
+  readonly masthead: Locator;
 
-  readonly footer = this.page.locator('footer');
-  readonly masthead = this.page.locator('#masthead');
+  constructor(page: Page) {
+    this.page = page;
+    this.footer = page.locator('footer');
+    this.masthead = page.locator('#masthead');
+  }
 
   /**
    * Rola até o rodapé e clica no botão com o idioma desejado (ex: "En", "Pt").

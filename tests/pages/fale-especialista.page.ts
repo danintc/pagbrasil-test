@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object que encapsula o fluxo de contato com especialista,
@@ -6,10 +6,15 @@ import { expect, type Page } from '@playwright/test';
  * e validação de requisições AJAX do Contact Form 7.
  */
 export class FaleEspecialistaPage {
-  constructor(public page: Page) {}
+  readonly page: Page;
+  readonly header: Locator;
+  readonly form: Locator;
 
-  readonly header = this.page.locator('header');
-  readonly form = this.page.locator('.fale-com-um-especialistaem-pagamentos-parae-commerce form').first();
+  constructor(page: Page) {
+    this.page = page;
+    this.header = page.locator('header');
+    this.form = page.locator('.fale-com-um-especialistaem-pagamentos-parae-commerce form').first();
+  }
 
   /**
    * Clica no link do cabeçalho que leva à página ou seção de contato.
@@ -27,16 +32,28 @@ export class FaleEspecialistaPage {
    * @param optionTitle Título da opção/card (ex: "Tenho um e-commerce")
    */
   async selecionarOpcaoEspecialista(optionTitle: string) {
+    const card = this.page.locator('.suporte-options .block').filter({ hasText: 'Fale com um especialista' }).first();
+    await card.scrollIntoViewIfNeeded();
+
     // Simula interação humana contínua para "acordar" os event listeners atrasados pelo NitroPack
-    await this.page.mouse.move(100, 100);
-    await this.page.mouse.wheel(0, 500);
-    await this.page.waitForTimeout(1500);
+    await this.page.mouse.move(200, 200);
+    await this.page.mouse.wheel(0, 300);
 
-    const link = this.page.locator('a').filter({ hasText: 'Entrar em contato' }).first();
-    await link.scrollIntoViewIfNeeded();
-    await link.click();
+    // Aguarda o NitroPack finalizar o carregamento do jQuery e a amarração do evento de clique no card
+    await this.page.waitForFunction(() => {
+      const jq = (window as any).jQuery;
+      if (!jq || !jq._data) return false;
+      const el = document.querySelector('.suporte-options .block');
+      return el && jq._data(el, 'events')?.click;
+    }, { timeout: 10000 }).catch(() => {});
 
-    await this.form.waitFor({ state: 'visible', timeout: 8000 });
+    // Clica no card do especialista e garante que o formulário fique visível no DOM
+    await expect(async () => {
+      if (!(await this.form.isVisible())) {
+        await card.click({ force: true });
+      }
+      await expect(this.form).toBeVisible({ timeout: 3000 });
+    }).toPass({ timeout: 15000 });
   }
 
   /**

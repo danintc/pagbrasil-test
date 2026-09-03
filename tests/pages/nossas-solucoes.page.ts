@@ -1,13 +1,17 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object que encapsula a navegação inicial e a validação
  * das opções disponíveis no mega menu "Nossas Soluções".
  */
 export class NossasSolucoesPage {
-  constructor(public page: Page) {}
+  readonly page: Page;
+  readonly megaMenu: Locator;
 
-  readonly megaMenu = this.page.locator('#menu-item-48800');
+  constructor(page: Page) {
+    this.page = page;
+    this.megaMenu = page.locator('#menu-item-48800');
+  }
 
   /**
    * Navega para a página inicial da PagBrasil em português (/pt-br/).

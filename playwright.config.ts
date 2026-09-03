@@ -9,14 +9,17 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   
+  /* Timeout global por teste (60s para garantir resiliência em E2E com rede externa) */
+  timeout: 60000,
+  
   /* Roda os testes dentro do mesmo arquivo de forma paralela */
   fullyParallel: true,
   
   /* Falha a build no CI se houver `.only` no código */
   forbidOnly: !!process.env.CI,
   
-  /* Utiliza 50% dos núcleos localmente e apenas 1 worker no CI para estabilidade */
-  workers: process.env.CI ? 1 : undefined,
+  /* Utiliza 3 workers localmente (1 por browser: Chromium, Firefox, WebKit) para tempo ideal (~45s) e 1 no CI */
+  workers: process.env.CI ? 1 : 3,
   
   /* Zero retries localmente para poupar tempo (fast feedback) */
   retries: process.env.CI ? 2 : 0,

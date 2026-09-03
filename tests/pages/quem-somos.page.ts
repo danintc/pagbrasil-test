@@ -1,14 +1,19 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 /**
  * Page Object que encapsula a navegação até a página "Quem Somos"
  * e a validação de seus componentes institucionais (linha do tempo, selos, cidades).
  */
 export class QuemSomosPage {
-  constructor(public page: Page) {}
+  readonly page: Page;
+  readonly header: Locator;
+  readonly footer: Locator;
 
-  readonly header = this.page.locator('header');
-  readonly footer = this.page.locator('footer');
+  constructor(page: Page) {
+    this.page = page;
+    this.header = page.locator('header');
+    this.footer = page.locator('footer');
+  }
 
   /**
    * Realiza a navegação encadeada: abre o menu pai via hover e clica no submenu.
